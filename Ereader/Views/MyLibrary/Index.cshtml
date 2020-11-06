@@ -1,0 +1,35 @@
+﻿@model List<Ereader.ViewModels.MyLibrary.MyLibraryViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                    @foreach (var item2 in item.ListTheme)
+                    {
+                    <p>@item2.Name</p>
+                    <form action="/Page/Index" method="post">
+                        <input type="hidden" name="idTheme" value="@item2.Id" />
+                        <button type="submit">
+                            <img src="data:image/png;base64, @item2.Image" alt="@item2.Name" width="350" height="350" />
+                        </button>
+                    </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
