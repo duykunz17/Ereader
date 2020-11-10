@@ -22,7 +22,11 @@ namespace Ereader.Queries
                             {
                                 Id = p.Id,
                                 Image = Convert.ToBase64String(p.ImageFile),
-                                PageIndex = p.PageIndex
+                                PageIndex = p.PageIndex,
+                                ListSentence = (List<SentenceViewModel>)p.SentenceInPage.Select(m => new SentenceViewModel() {
+                                    IdSentence = m.Id,
+                                    SoundFile = Convert.ToBase64String(m.SoundFile)
+                                }).ToList()
                             }).ToList();
                 return list;
             }

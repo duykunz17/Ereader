@@ -19,5 +19,6 @@ namespace Ereader.Controllers
             var model = query.getPageInTheme(idTheme);
             return View(model);
         }
+        
     }
 }

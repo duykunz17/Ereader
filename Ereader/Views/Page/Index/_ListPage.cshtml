@@ -3,37 +3,44 @@
 @{
     ViewData["Title"] = "Index";
     <style type="text/css">
-               body {
-                   background: #ccc;
-               }
+        body {
+            background: #ccc;
+        }
 
-               #flipbook {
-                   width: 1152px;
-                   height: 752px;
-               }
+        #flipbook {
+            width: 1152px;
+            height: 752px;
+        }
 
-               #flipbook .turn-page {
-                   background-color: #ccc;
-                   background-size: 100% 100%;
-               }
-
+            #flipbook .turn-page {
+                background-color: #ccc;
+                background-size: 100% 100%;
+            }
     </style>
 }
-<div id="zoom-viewport">
-    <div id="flipbook">
+<div id="flipbook">
+    @foreach (var item in Model)
+    {
 
-        @foreach (var item in Model)
+        if (item.ListSentence.Count > 0)
         {
-            <img src="data:image/png;base64, @item.Image" alt="@item.Id" width="350" height="350" />
+            <div id="page">
+                <img src="data:image/png;base64, @item.Image" alt="@item.Id" width="576" height="752" />
+                <input type="hidden" id="index" value="@item.ListSentence.FirstOrDefault().IdSentence" />
+                <audio id="@item.ListSentence.FirstOrDefault().IdSentence">
+                    <source src="data:audio/mp3;base64, @item.ListSentence.FirstOrDefault().SoundFile">
+                </audio>
+            </div>
         }
-    </div>
+        else
+        {
+            <div>
+                <img src="data:image/png;base64, @item.Image" alt="@item.Id" width="576" height="752" />
+            </div>
+        }
+    }
 </div>
 <script>
-    //$("#flipbook").turn({
-    //    width: 400,
-    //    height: 300,
-    //    autoCenter: true
-    //});
 
     $(window).ready(function () {
         $('#flipbook').turn({
@@ -42,27 +49,66 @@
             gradients: !$.isTouch,
             elevation: 50,
             when: {
-                turned: function (e, page) {
-                }
+                //turning: function (e, page, view) {
+                //    var id = $("#index").val();
+                //    var audio = document.getElementById("_" + id);
+                //    audio.play();
+                //}
             }
         });
+
+        //$('.page-wrapper[style*="display: none"]')
     });
 
+    function pre() {
+        var x = $('.page-wrapper').attr('page');
+        console.log(x);
+        debugger;
+        $("#flipbook").turn("previous");
+        var id = $("#index").val();
+        var audio = document.getElementById("_" + id);
+        audio.play();
+    }
+    async function next() {
+        $("#flipbook").turn("next");
+        var arr = [];
+        var page = $('.page-wrapper').attr('page');
+        debugger;
+        if (page == '1') {
+            arr.push(parseInt(page) + 1);
+            arr.push(parseInt(page) + 2);
+        } else {
+            arr.push(parseInt(page) + 2);
+            arr.push(parseInt(page) + 3);
+        }
+        console.log(arr);
+        var getPage = $('.page-wrapper[page=' + arr[0] + '] > div > .page > audio').attr('id');
+        var audio = document.getElementById(getPage);
+        audio.play();
+        audio.onended = await function () {
+            getPage = $('.page-wrapper[page=' + arr[1] + '] > div > .page > audio').attr('id');
+            audio = document.getElementById(getPage);
+            audio.play();
+        };
+        //for (var i = 0; i < arr.length; i++) {
+        //    var getPage = $('.page-wrapper[page=' + arr[i] + '] > div > .page > audio').attr('id');
+        //    var audio = document.getElementById(getPage);
+        //    audio.play();
+        //    audio.onended = await function () {
+        //    };
+        //}
+    }
     $(window).bind('keydown', function (e) {
-        if (e.keyCode == 37)
-            $("#flipbook").turn("previous");
-        else if (e.keyCode == 39)
-            $("#flipbook").turn("next");
-        //else if (e.keyCode == 38)
-        //    $('#zoom-viewport').zoom('zoomIn');
-        //else if (e.keyCode == 40)
-        //    $('#zoom-viewport').zoom('zoomOut');
+        if (e.keyCode == 37) {
+            this.pre();
+        }
+        else if (e.keyCode == 39) {
+            this.next();
+        }
     });
 
-    document.querySelector('#zoom-viewport').addEventListener('click', function (event) {
-        event.preventDefault();
-        zoom.to({ element: event.target });
-    });
+
+
 </script>
 
 

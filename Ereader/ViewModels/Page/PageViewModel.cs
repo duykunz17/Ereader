@@ -10,5 +10,12 @@ namespace Ereader.ViewModels.Page
         public int? Id { get; set; }
         public string Image { get; set; }
         public int? PageIndex { get; set; }
+        public List<SentenceViewModel> ListSentence { get; set; }
+    }
+
+    public class SentenceViewModel
+    {
+        public int? IdSentence { get; set; }
+        public string SoundFile { get; set; }
     }
 }
